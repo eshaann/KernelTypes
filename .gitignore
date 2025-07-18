@@ -1,0 +1,21 @@
+# build artifacts
+*.o
+*.bin
+*.iso
+
+# downloaded source
+binutils-2.41/
+binutils-2.41.tar.xz
+gcc-14.1.0/
+
+# build directories
+build-binutils/
+build-binutils-cross/
+build-gcc-cross/
+isodir/
+
+# editor files
+*~
+*.swp
+.DS_Store
+
