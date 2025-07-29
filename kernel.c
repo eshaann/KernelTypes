@@ -9,6 +9,9 @@
 #error "This needs to be built with an i386-elf compiler"
 #endif
 
+
+void handleNewLine(void);
+
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
 	VGA_COLOR_WHITE = 15,
@@ -54,10 +57,7 @@ void terminal_putchar(char c) {
 		default:
 			terminal_buffer[index] = vga_entry(c, terminal_color);
 			if (++terminal_column == VGA_WIDTH) {
-				terminal_column = 0;
-				if (++terminal_row == VGA_HEIGHT) {
-					//terminal_column = 0;
-				}
+				//terminal_column = 0;
 			}	
 	}
 }
@@ -70,12 +70,21 @@ void terminal_writestring(const char* str) {
 
 void kernel_main(void) {
 	terminal_initialize();
-	terminal_writestring("Hello from kernel^!\nhello world");
+	terminal_writestring("Hello from kernel^!\nhello world\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\n");
 }
 
 void handleNewLine(void){
 	terminal_column = 0;
 	if (++terminal_row == VGA_HEIGHT) {
 		terminal_column = 0;
+		for(int y = 1; y < VGA_HEIGHT; y++){
+			for(int x = 0; x < VGA_WIDTH; x++){
+				terminal_buffer[(y-1) * VGA_WIDTH + x] = terminal_buffer[y * VGA_WIDTH + x];
+			}
+		}
+		for(int x = 0; x < VGA_WIDTH; x++){
+			terminal_buffer[(VGA_HEIGHT - 1) * VGA_WIDTH + x] = vga_entry(' ', terminal_color);
+		}
+		terminal_row = VGA_HEIGHT - 1;
 	}
 }
