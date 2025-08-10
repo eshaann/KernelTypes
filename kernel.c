@@ -11,6 +11,7 @@
 
 
 void handleNewLine(void);
+static void updateCursorPosition(size_t row, size_t col);
 
 enum vga_color {
 	VGA_COLOR_BLACK = 0,
@@ -73,7 +74,7 @@ void terminal_writestring(const char* str) {
 
 void kernel_main(void) {
 	terminal_initialize();
-	terminal_writestring("Hello from kernel\n");
+	terminal_writestring("Hello from kernel\ntest");
 }
 
 void handleNewLine(void){
@@ -102,11 +103,11 @@ static void updateCursorPosition(size_t row, size_t col){
 	//low byte of cursor pos
 	outb(0x3D4, 0x0F);
 	//modify 
-	outb(0x3D5, (uint8_t)(pos & 0xFF));
+	outb(0x3D5, (uint8_t)(position & 0xFF));
 
 	//high byte of pos
 	outb(0x3D4, 0x0E);
 	//modify
-	outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+	outb(0x3D5, (uint8_t)((position >> 8) & 0xFF));
 
 }
