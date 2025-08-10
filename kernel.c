@@ -59,7 +59,10 @@ void terminal_putchar(char c) {
 			if (++terminal_column == VGA_WIDTH) {
 				//terminal_column = 0;
 			}	
+			break;
 	}
+
+	updateCursorPosition(terminal_row, terminal_column);
 }
 
 void terminal_writestring(const char* str) {
@@ -70,7 +73,7 @@ void terminal_writestring(const char* str) {
 
 void kernel_main(void) {
 	terminal_initialize();
-	terminal_writestring("Hello from kernel^!\nhello world\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\nh\n");
+	terminal_writestring("Hello from kernel\n");
 }
 
 void handleNewLine(void){
@@ -87,4 +90,23 @@ void handleNewLine(void){
 		}
 		terminal_row = VGA_HEIGHT - 1;
 	}
+}
+
+static inline void outb(uint16_t port, uint8_t val){
+	asm volatile("outb %0, %1" : : "a"(val), "Nd"(port));
+}
+
+static void updateCursorPosition(size_t row, size_t col){
+	uint16_t position = row * VGA_WIDTH + col;
+
+	//low byte of cursor pos
+	outb(0x3D4, 0x0F);
+	//modify 
+	outb(0x3D5, (uint8_t)(pos & 0xFF));
+
+	//high byte of pos
+	outb(0x3D4, 0x0E);
+	//modify
+	outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+
 }
